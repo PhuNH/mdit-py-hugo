@@ -29,6 +29,10 @@ class AttributeTestCase(unittest.TestCase):
                 count += 1
         self.assertEqual('hlist-2', bullet_list_open_3.attrs['class'])
 
+    def test_attr_count(self):
+        tokens_with_class = list(filter(lambda t: 'class' in t.attrs, self.tokens))
+        self.assertEqual(8, len(tokens_with_class))
+
 
 if __name__ == '__main__':
     unittest.main()
