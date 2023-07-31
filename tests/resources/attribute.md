@@ -19,9 +19,9 @@ paragraph here
 and more
 {.hparagraph}
 
-head | head2
---- | ---
-body | body2
+| head | head2 |
+|------|-------|
+| body | body2 |
 {.htable}
 
     int main() {
