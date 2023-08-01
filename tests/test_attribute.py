@@ -1,12 +1,16 @@
+# SPDX-FileCopyrightText: 2023 Phu Hung Nguyen <phuhnguyen@outlook.com>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import importlib.resources as pkg_resources
 import unittest
 
 from markdown_it import MarkdownIt
 from mdit_py_hugo.attribute import attribute_plugin
+from mdit_py_plugins.front_matter import front_matter_plugin
 
 
 class AttributeTestCase(unittest.TestCase):
-    mdi = MarkdownIt().use(attribute_plugin).enable('table')
+    mdi = MarkdownIt().use(front_matter_plugin).use(attribute_plugin).enable('table')
     with pkg_resources.open_text('tests.resources', 'attribute.md') as f_md:
         tokens = mdi.parse(f_md.read())
 

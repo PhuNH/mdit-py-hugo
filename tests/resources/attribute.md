@@ -1,3 +1,8 @@
+---
+authors:
+- SPDX-FileCopyrightText: 2023 Phu Hung Nguyen <phuhnguyen@outlook.com>
+SPDX-License-Identifier: CC0-1.0
+---
 > blockquote
 > > nested blockquote
 {.hbq cls="val"}
