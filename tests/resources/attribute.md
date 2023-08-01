@@ -38,13 +38,13 @@ int main() {
 ```
 {.hfence}
 
-# atx heading {.hatx}
+# atx heading {.hatx}{.hatx2}
 {.hheading}
 
 <div></div>
 {.hhtml}
 
-setext heading {.hsetext}
+setext heading{.hsetext}
 ==
 {.hlheading}
 
