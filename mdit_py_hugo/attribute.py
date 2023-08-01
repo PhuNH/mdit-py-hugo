@@ -12,12 +12,10 @@ Attributes are placed inside single curly brackets after the element it decorate
 
 import logging
 import re
-from typing import List
 
 from markdown_it import MarkdownIt
 from markdown_it.rules_core import StateCore
-from markdown_it.token import Token
-from mdit_py_plugins.attrs.index import _attr_block_rule
+from mdit_py_plugins.attrs.index import _attr_block_rule, _find_opening
 from mdit_py_plugins.attrs.parse import parse, ParseError
 
 LOGGER = logging.getLogger(__name__)
@@ -33,23 +31,12 @@ def attribute_plugin(mdi: MarkdownIt) -> None:
     mdi.core.ruler.after('block', 'attribute_title', _attribute_resolve_title_rule)
 
 
-def _find_affected_open(tokens: List[Token], from_index: int) -> int:
-    affected_close_tokens = ['blockquote_close', 'hr', 'bullet_list_close', 'ordered_list_close',
-                             'paragraph_close', 'table_close']
-    # unaffected_tokens = ['code_block', 'fence', 'heading_close', 'html_block'] + ['attrs_block']
-    # Hugo doesn't stack attributes, only closest attribute block is used
-    if tokens[from_index].type == 'hr':
-        return from_index
-    if tokens[from_index].type in affected_close_tokens:
-        for i in range(from_index-1, -1, -1):
-            if (tokens[i].type == tokens[from_index].type.replace('close', 'open') and
-                    tokens[i].level == tokens[from_index].level):
-                return i
-    return -1
-
-
 def _attribute_resolve_block_rule(state: StateCore) -> None:
     """Find an attribute block, move its attributes to the previous affected block."""
+    affected_closing_tokens = ['blockquote_close', 'hr', 'bullet_list_close', 'ordered_list_close',
+                               'paragraph_close', 'table_close']
+    # unaffected_tokens = ['code_block', 'fence', 'heading_close', 'html_block'] + ['attrs_block']
+    # Hugo doesn't stack attributes, only closest attribute block is used
     tokens = state.tokens
     i = len(tokens) - 1
     while i > 0:
@@ -57,10 +44,14 @@ def _attribute_resolve_block_rule(state: StateCore) -> None:
             i -= 1
             continue
 
-        affected_index = _find_affected_open(tokens, i-1)
-        if affected_index > -1:
-            if 'class' in tokens[i].attrs:
-                tokens[affected_index].attrs['class'] = tokens[i].attrs['class']
+        closing_index = i - 1
+        if tokens[closing_index].type == 'hr':
+            affected_index = closing_index
+        elif tokens[closing_index].type in affected_closing_tokens:
+            affected_index = _find_opening(tokens, closing_index)
+        else:
+            affected_index = None
+        if affected_index is not None:
             tokens[affected_index].attrs.update(tokens[i].attrs)
 
         state.tokens.pop(i)
@@ -70,16 +61,14 @@ def _attribute_resolve_block_rule(state: StateCore) -> None:
 def _attribute_resolve_title_rule(state: StateCore) -> None:
     """Find a heading block, move attributes left in its 'inline' to its 'heading_open' token."""
     tokens = state.tokens
-    pattern = re.compile(r'^(.+)({.+?}) *$')
+    attribute_pattern = re.compile(r'^(.+)({.+?}) *$')
     for i in range(0, len(tokens)-2):
         # after a 'heading_open' must be an 'inline'
-        if tokens[i].type == 'heading_open' and (match := pattern.fullmatch(tokens[i+1].content)):
+        if tokens[i].type == 'heading_open' and (match := attribute_pattern.fullmatch(tokens[i+1].content)):
             tokens[i+1].content = match.group(1)
             try:
                 _, attrs = parse(match.group(2))
             except ParseError:
                 LOGGER.error(f'Could not parse attributes "{match.group(2)}" in heading "{match.group(0)}"')
                 continue
-            if 'class' in attrs:
-                tokens[i].attrs['class'] = attrs['class']
             tokens[i].attrs.update(attrs)
