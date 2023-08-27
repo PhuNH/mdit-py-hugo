@@ -47,16 +47,18 @@ def _attribute_resolve_block_rule(state: StateCore) -> None:
         closing_index = i - 1
         closing_token = tokens[closing_index]
         if closing_token.type == 'hr':
-            affected_index = closing_index
-        elif closing_token.type in affected_closing_tokens:
-            affected_index = _find_opening(tokens, closing_index)
+            affected_indices = {closing_index}
         # setext headings are affected too
-        elif closing_token.type == 'heading_close' and closing_token.markup in {'-', '='}:
-            affected_index = _find_opening(tokens, closing_index)
+        elif closing_token.type in affected_closing_tokens or (
+                closing_token.type == 'heading_close' and closing_token.markup in {'-', '='}):
+            affected_indices = {closing_index}
+            if opening := _find_opening(tokens, closing_index):
+                affected_indices.add(opening)
         else:
-            affected_index = None
-        if affected_index is not None:
-            tokens[affected_index].attrs.update(tokens[i].attrs)
+            affected_indices = set()
+        if affected_indices:
+            for a_i in affected_indices:
+                tokens[a_i].attrs.update(tokens[i].attrs)
 
         state.tokens.pop(i)
         i -= 1
