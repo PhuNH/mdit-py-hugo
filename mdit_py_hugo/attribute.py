@@ -21,14 +21,14 @@ from mdit_py_plugins.attrs.parse import parse, ParseError
 LOGGER = logging.getLogger(__name__)
 
 
-def attribute_plugin(mdi: MarkdownIt) -> None:
+def attribute_plugin(mdi: MarkdownIt, *, block=True, title=True) -> None:
     # alt: list of rules which can be terminated by this one
-    mdi.block.ruler.before('fence',
-                           'attribute_block',
-                           _attr_block_rule,
-                           {'alt': ['blockquote', 'lheading', 'list', 'paragraph', 'reference', 'table']})
-    mdi.core.ruler.after('block', 'attribute_block', _attribute_resolve_block_rule)
-    mdi.core.ruler.after('block', 'attribute_title', _attribute_resolve_title_rule)
+    if block:
+        block_alt = ['blockquote', 'lheading', 'list', 'paragraph', 'reference', 'table', 'deflist']
+        mdi.block.ruler.before('fence', 'attribute_block', _attr_block_rule, {'alt': block_alt})
+        mdi.core.ruler.after('block', 'attribute_block', _attribute_resolve_block_rule)
+    if title:
+        mdi.core.ruler.after('block', 'attribute_title', _attribute_resolve_title_rule)
 
 
 def _attribute_resolve_block_rule(state: StateCore) -> None:
