@@ -6,7 +6,7 @@
 Hugo has a custom syntax for adding attributes to titles and blocks.
 Attributes are placed inside single curly brackets after the element it decorates:
 - on the same line for titles (heading, lheading);
-- on a new line directly below for blocks (blockquote, hr, list, paragraph, table),
+- on a new line directly below for blocks (blockquote, hr, list, paragraph, table, deflist),
     - no effect for other blocks (code, fence, html_block, reference).
 """
 
@@ -34,7 +34,7 @@ def attribute_plugin(mdi: MarkdownIt) -> None:
 def _attribute_resolve_block_rule(state: StateCore) -> None:
     """Find an attribute block, move its attributes to the previous affected block."""
     affected_closing_tokens = ['blockquote_close', 'hr', 'bullet_list_close', 'ordered_list_close',
-                               'paragraph_close', 'table_close']
+                               'paragraph_close', 'table_close', 'dl_close']
     # unaffected_tokens = ['code_block', 'fence', 'heading_close', 'html_block'] + ['attrs_block']
     # Hugo doesn't stack attributes, only closest attribute block is used
     tokens = state.tokens
