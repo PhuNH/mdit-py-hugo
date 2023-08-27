@@ -22,13 +22,13 @@ LOGGER = logging.getLogger(__name__)
 
 
 def attribute_plugin(mdi: MarkdownIt, *, block=True, title=True) -> None:
+    if title:
+        mdi.core.ruler.after('block', 'attribute_title', _attribute_resolve_title_rule)
     # alt: list of rules which can be terminated by this one
     if block:
         block_alt = ['blockquote', 'lheading', 'list', 'paragraph', 'reference', 'table', 'deflist']
         mdi.block.ruler.before('fence', 'attribute_block', _attr_block_rule, {'alt': block_alt})
         mdi.core.ruler.after('block', 'attribute_block', _attribute_resolve_block_rule)
-    if title:
-        mdi.core.ruler.after('block', 'attribute_title', _attribute_resolve_title_rule)
 
 
 def _attribute_resolve_block_rule(state: StateCore) -> None:
@@ -45,9 +45,13 @@ def _attribute_resolve_block_rule(state: StateCore) -> None:
             continue
 
         closing_index = i - 1
-        if tokens[closing_index].type == 'hr':
+        closing_token = tokens[closing_index]
+        if closing_token.type == 'hr':
             affected_index = closing_index
-        elif tokens[closing_index].type in affected_closing_tokens:
+        elif closing_token.type in affected_closing_tokens:
+            affected_index = _find_opening(tokens, closing_index)
+        # setext headings are affected too
+        elif closing_token.type == 'heading_close' and closing_token.markup in {'-', '='}:
             affected_index = _find_opening(tokens, closing_index)
         else:
             affected_index = None
