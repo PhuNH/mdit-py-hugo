@@ -14,3 +14,13 @@ Currently compliant with Hugo 0.110.0.
 ```bash
 pip install mdit-py-hugo
 ```
+
+## Development
+
+- With Conda
+
+```bash
+conda env create -f environment.yml
+conda activate mph
+poetry install --no-root
+```
