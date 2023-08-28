@@ -3,7 +3,7 @@
 
 [tool.poetry]
 name = "mdit-py-hugo"
-version = "0.3.0"
+version = "0.3.1"
 description = "Collection of markdown-it-py plugins and extensions that add supports for Hugo syntaxes and functionalities"
 authors = ["Phu Hung Nguyen <phuhnguyen@outlook.com>"]
 license = "AGPL-3.0-or-later"
