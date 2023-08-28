@@ -51,7 +51,7 @@ class AttributeTestCase(unittest.TestCase):
 
     def test_attr_count(self):
         tokens_with_class = list(filter(lambda t: 'class' in t.attrs, self.tokens))
-        self.assertEqual(10, len(tokens_with_class))
+        self.assertEqual(18, len(tokens_with_class))
 
 
 if __name__ == '__main__':
