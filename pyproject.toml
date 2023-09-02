@@ -6,14 +6,13 @@ name = "mdit-py-hugo"
 version = "0.3.1"
 description = "Collection of markdown-it-py plugins and extensions that add supports for Hugo syntaxes and functionalities"
 authors = ["Phu Hung Nguyen <phuhnguyen@outlook.com>"]
-license = "AGPL-3.0-or-later"
+license = "LGPL-2.1-or-later"
 readme = "README.md"
 repository = "https://github.com/phunh/mdit-py-hugo"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
-    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3"
 ]
