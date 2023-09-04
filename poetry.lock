@@ -7,6 +7,7 @@ optional = false
 python-versions = ">=3.8"
 
 [package.dependencies]
+mdit-py-plugins = {version = "*", optional = true, markers = "extra == \"plugins\""}
 mdurl = ">=0.1,<1.0"
 
 [package.extras]
@@ -46,7 +47,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "966a0146fb08f4d65ab2dd4ba21ff4062f54381a90675ea33ab95f8bcb936ecf"
+content-hash = "2d93b08d32cffd0d3b4a93a517d3864ee821f84a30456acf66b20afdc625ac80"
 
 [metadata.files]
 markdown-it-py = [

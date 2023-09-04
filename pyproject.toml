@@ -20,9 +20,7 @@ packages = [{include = "mdit_py_hugo"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-markdown-it-py = "^3.0.0"
-mdit-py-plugins = "^0.4.0"
-
+markdown-it-py = {extras = ["plugins"], version = "^3.0.0"}
 
 [build-system]
 requires = ["poetry-core"]
