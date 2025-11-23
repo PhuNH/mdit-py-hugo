@@ -125,19 +125,25 @@ class ShortcodeTestCase(unittest.TestCase):
     and spaces`''', props.params['content'])
 
     def test_inline(self):
+        idx = 0
         for i, t in enumerate(self.tokens):
-            if t.type == 'blockquote_open':
-                sc = self.tokens[i+2].children[0]
-                self.assertEqual('short', sc.meta['name'])
-                self.assertEqual('content', list(sc.meta['params'].keys())[0])
-                self.assertEqual('"shortcode in blockquote"', sc.meta['params']['content'])
-            elif t.type == 'bullet_list_open':
-                sc1 = self.tokens[i+3].children[0]
-                sc2 = self.tokens[i+8].children[0]
-                sc3 = self.tokens[i+13].children[0]
-                self.assertEqual('1', sc1.meta['params']['0'])
-                self.assertEqual('"list item 2"', sc2.meta['params']['content'])
-                self.assertEqual('`list item 3`', sc3.meta['params']['0'])
+            if t.type == 'paragraph_open':
+                idx += 1
+                sc = self.tokens[i+1].children[0]
+                if idx == 1: # blockquote
+                    self.assertEqual('short', sc.meta['name'])
+                    self.assertEqual('content', list(sc.meta['params'].keys())[0])
+                    self.assertEqual('"shortcode in blockquote"', sc.meta['params']['content'])
+                elif idx == 2: # bullet list 1
+                    self.assertEqual('1', sc.meta['params']['0'])
+                elif idx == 3: # bullet list 2
+                    self.assertEqual('"list item 2"', sc.meta['params']['content'])
+                elif idx == 4: # bullet list 3
+                    self.assertEqual('`list item 3`', sc.meta['params']['0'])
+                elif idx == 6: # split param
+                    self.assertEqual('short', sc.meta['name'])
+                    self.assertEqual('`shortcode <b>HTML</b>\n"with name in another\nparagraph" than the delimiter`', sc.meta['params']['0'])
+                    self.assertEqual('"true"', sc.meta['params']['1'])
 
 
 if __name__ == '__main__':
